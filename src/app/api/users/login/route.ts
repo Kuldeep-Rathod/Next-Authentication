@@ -11,47 +11,87 @@ export const POST = async (req: NextRequest) => {
         const reqBody = await req.json();
         const { email, password } = reqBody;
 
-        const user = await User.findOne({ email });
-        console.log(user);
-
-        if (!user) {
-            return NextResponse.json(
-                { success: false, message: "User Not Found" },
-                { status: 404 }
-            );
-        }
-
-        const validPassword = bcrypt.compare(password, user.password);
-
-        if (!validPassword) {
+        // Validate input
+        if (!email || !password) {
             return NextResponse.json(
                 {
                     success: false,
-                    message: "Incorrect Credentials",
+                    error: "Validation Error",
+                    message: "Email and password are required",
+                },
+                { status: 400 }
+            );
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: "Authentication Error",
+                    message: "Invalid email or password", // Generic message for security
                 },
                 { status: 401 }
             );
         }
 
-        const tokenData = { id: user._id };
+        // Compare passwords
+        const validPassword = await bcrypt.compare(password, user.password);
+
+        if (!validPassword) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: "Authentication Error",
+                    message: "Invalid email or password", // Same message as above
+                },
+                { status: 401 }
+            );
+        }
+
+        // Create token
+        const tokenData = {
+            id: user._id,
+            email: user.email,
+            username: user.username,
+        };
 
         const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, {
             expiresIn: "1h",
         });
 
+        // Create response
         const response = NextResponse.json(
-            { success: true, message: `Welcome back ${user.username}` },
+            {
+                success: true,
+                message: `Welcome back ${user.username}`,
+                user: {
+                    id: user._id,
+                    email: user.email,
+                    username: user.username,
+                },
+            },
             { status: 200 }
         );
 
+        // Set cookie
         response.cookies.set("token", token, {
             httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 60 * 60, // 1 hour
         });
 
         return response;
     } catch (error: any) {
+        console.error("Login error:", error);
         return NextResponse.json(
-            { success: false, error: error.message },
+            {
+                success: false,
+                error: "Server Error",
+                message: error.message || "An unexpected error occurred",
+            },
             { status: 500 }
         );
     }

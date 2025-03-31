@@ -1,25 +1,22 @@
 import { dbConnect } from "@/config/dbConnect";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 dbConnect();
 
-export const POST = async () => {
+export async function GET() {
     try {
-        const response = NextResponse.json(
-            { success: true, message: "User Logged Out Successfully" },
+        // Clear the token cookie
+        (await cookies()).delete("token");
+
+        return NextResponse.json(
+            { success: true, message: "Logout successful" },
             { status: 200 }
         );
-
-        response.cookies.set("token", "", {
-            httpOnly: true,
-            expires: new Date(0),
-        });
-
-        return response;
     } catch (error: any) {
         return NextResponse.json(
-            { success: false, error: error.message },
+            { success: false, message: error.message },
             { status: 500 }
         );
     }
-};
+}

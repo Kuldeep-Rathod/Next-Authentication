@@ -2,17 +2,9 @@ import User from "@/models/userModel";
 import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
 
-export const sendEmail = async ({
-    email,
-    emailType,
-    userId,
-}: {
-    email: string;
-    emailType: string;
-    userId: string;
-}) => {
+export const sendEmail = async ({ email, emailType, userId }: any) => {
     try {
-        const hashedToken = await bcrypt.hash(userId, 10);
+        const hashedToken = await bcrypt.hash(userId.toString(), 10);
 
         if (emailType === "VERIFY") {
             await User.findByIdAndUpdate(userId, {
@@ -31,7 +23,7 @@ export const sendEmail = async ({
             port: 2525,
             auth: {
                 user: "16e0ce43c7ec47",
-                pass: "****1e80",
+                pass: "0e823c1a2d1e80",
             },
         });
 

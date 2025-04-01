@@ -1,6 +1,6 @@
-import { dbConnect } from "@/config/dbConnect";
-import User from "@/models/userModel";
-import { NextRequest, NextResponse } from "next/server";
+import { dbConnect } from '@/config/dbConnect';
+import User from '@/models/userModel';
+import { NextRequest, NextResponse } from 'next/server';
 
 dbConnect();
 
@@ -18,7 +18,7 @@ export const POST = async (req: NextRequest) => {
 
         if (!user) {
             return NextResponse.json(
-                { error: "Invalid Token" },
+                { error: 'Invalid Token' },
                 { status: 400 }
             );
         }
@@ -32,7 +32,7 @@ export const POST = async (req: NextRequest) => {
 
         return NextResponse.json({
             success: true,
-            message: "User Verified Successfully",
+            message: 'User Verified Successfully',
         });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });

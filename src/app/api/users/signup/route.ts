@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
-import User from "@/models/userModel";
-import bcrypt from "bcryptjs";
-import { dbConnect } from "@/config/dbConnect";
+import { NextResponse } from 'next/server';
+import User from '@/models/userModel';
+import bcrypt from 'bcryptjs';
+import { dbConnect } from '@/config/dbConnect';
 
 dbConnect();
 
@@ -13,14 +13,14 @@ export async function POST(request: Request) {
         // Validation checks
         if (!username || !email || !password) {
             return NextResponse.json(
-                { error: "All fields are required" },
+                { error: 'All fields are required' },
                 { status: 400 }
             );
         }
 
         if (password.length < 6) {
             return NextResponse.json(
-                { error: "Password must be at least 6 characters" },
+                { error: 'Password must be at least 6 characters' },
                 { status: 400 }
             );
         }
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return NextResponse.json(
-                { error: "User already exists" },
+                { error: 'User already exists' },
                 { status: 400 }
             );
         }
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json(
             {
-                message: "User created successfully",
+                message: 'User created successfully',
                 success: true,
                 user: {
                     id: newUser._id,

@@ -1,8 +1,8 @@
-import User from "@/models/userModel";
-import bcrypt from "bcryptjs";
-import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
-import { dbConnect } from "@/config/dbConnect";
+import User from '@/models/userModel';
+import bcrypt from 'bcryptjs';
+import { NextRequest, NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
+import { dbConnect } from '@/config/dbConnect';
 
 dbConnect();
 
@@ -16,8 +16,8 @@ export const POST = async (req: NextRequest) => {
             return NextResponse.json(
                 {
                     success: false,
-                    error: "Validation Error",
-                    message: "Email and password are required",
+                    error: 'Validation Error',
+                    message: 'Email and password are required',
                 },
                 { status: 400 }
             );
@@ -29,8 +29,8 @@ export const POST = async (req: NextRequest) => {
             return NextResponse.json(
                 {
                     success: false,
-                    error: "Authentication Error",
-                    message: "Invalid email or password", // Generic message for security
+                    error: 'Authentication Error',
+                    message: 'Invalid email or password', // Generic message for security
                 },
                 { status: 401 }
             );
@@ -43,8 +43,8 @@ export const POST = async (req: NextRequest) => {
             return NextResponse.json(
                 {
                     success: false,
-                    error: "Authentication Error",
-                    message: "Invalid email or password", // Same message as above
+                    error: 'Authentication Error',
+                    message: 'Invalid email or password', // Same message as above
                 },
                 { status: 401 }
             );
@@ -58,7 +58,7 @@ export const POST = async (req: NextRequest) => {
         };
 
         const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, {
-            expiresIn: "1h",
+            expiresIn: '1h',
         });
 
         // Create response
@@ -76,21 +76,21 @@ export const POST = async (req: NextRequest) => {
         );
 
         // Set cookie
-        response.cookies.set("token", token, {
+        response.cookies.set('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
             maxAge: 60 * 60, // 1 hour
         });
 
         return response;
     } catch (error: any) {
-        console.error("Login error:", error);
+        console.error('Login error:', error);
         return NextResponse.json(
             {
                 success: false,
-                error: "Server Error",
-                message: error.message || "An unexpected error occurred",
+                error: 'Server Error',
+                message: error.message || 'An unexpected error occurred',
             },
             { status: 500 }
         );
